@@ -1,5 +1,9 @@
 project('deeznuts', 'cpp', default_options: ['cpp_std=c++23', 'warning_level=3'])
 
+includes = include_directories('include')
+
+subdir('tests')
+
 version = run_command('git', 'describe', check: true)
 
 project_source_files = ['src/deeznuts.cxx']
@@ -17,4 +21,5 @@ executable(
   dependencies: project_dependencies,
   install: true,
   cpp_args: build_args,
+  include_directories: includes,
 )
