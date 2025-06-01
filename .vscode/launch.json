@@ -1,0 +1,22 @@
+{
+    "$schema": "https://raw.githubusercontent.com/mfussenegger/dapconfig-schema/master/dapconfig-schema.json",
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "codelldb",
+            "request": "launch",
+            "name": "Debug DeezNutS",
+            "preLaunchTask": "Compile",
+            "expressions": "native",
+            "program": "${workspaceFolder}/builddir/deeznuts"
+        },
+        {
+            "type": "codelldb",
+            "request": "launch",
+            "name": "Debug current test",
+            "preLaunchTask": "Compile",
+            "expressions": "native",
+            "program": "${workspaceFolder}/builddir/tests/${fileBasenameNoExtension}"
+        }
+    ]
+}
