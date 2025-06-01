@@ -5,6 +5,7 @@
 #include <print>
 
 class InvalidName : public std::exception {};
+
 class InvalidInput : public std::exception {};
 
 struct Name {
@@ -22,7 +23,7 @@ struct Name {
     Name(Name &&)                 = default;
     Name &operator=(const Name &) = delete;
     Name &operator=(Name &&)      = default;
-    ~Name() = default;
+    ~Name()                       = default;
 
 private:
     std::string firstname;
@@ -45,14 +46,15 @@ struct std::formatter<Name> {
         return position;
     }
 
-    auto format(const Name &name, std::format_context &context) const {
+    auto
+    format(const Name &name, std::format_context &context) const {
         if (lastnameFirst) {
-            return std::format_to(context.out(), "{}, {}", name.lastname,
-                                  name.firstname);
+            return std::format_to(context.out(), "{}, {}",
+                                  name.lastname, name.firstname);
         }
 
-        return std::format_to(context.out(), "{} {}", name.firstname,
-                              name.lastname);
+        return std::format_to(context.out(), "{} {}",
+                              name.firstname, name.lastname);
     }
 
     bool lastnameFirst = false;
@@ -65,7 +67,7 @@ struct Age {
     Age(Age &&)                 = default;
     Age &operator=(const Age &) = delete;
     Age &operator=(Age &&)      = default;
-    ~Age() = default;
+    ~Age()                      = default;
 
 private:
     int age;
@@ -78,7 +80,8 @@ struct std::formatter<Age> {
         return context.begin();
     }
 
-    auto format(const Age &age, std::format_context &context) const {
+    auto
+    format(const Age &age, std::format_context &context) const {
         return std::format_to(context.out(), "{}", age.age);
     }
 };
@@ -90,7 +93,7 @@ struct Gender {
     Gender(Gender &&)                 = default;
     Gender &operator=(const Gender &) = delete;
     Gender &operator=(Gender &&)      = default;
-    ~Gender() = default;
+    ~Gender()                         = default;
 
 private:
     char gender;
@@ -103,7 +106,8 @@ struct std::formatter<Gender> {
         return context.begin();
     }
 
-    auto format(const Gender &gender, std::format_context &context) const {
+    auto format(const Gender        &gender,
+                std::format_context &context) const {
         return std::format_to(context.out(), "{}", gender.gender);
     }
 };
@@ -117,7 +121,8 @@ struct Person {
 };
 
 template <>
-auto decoder::decode<Person>(const std::vector<uint8_t> &buffer) -> Person {
+auto decoder::decode<Person>(const std::vector<uint8_t> &buffer)
+    -> Person {
     if (buffer.size() < Person::MINIMUM_PACKET_SIZE) {
         throw InvalidInput();
     }
@@ -131,10 +136,11 @@ auto decoder::decode<Person>(const std::vector<uint8_t> &buffer) -> Person {
     auto packetLength = take<uint8_t>(iter);
     auto age          = take<uint8_t>(iter);
     auto gender       = take<char>(iter);
-    auto name = take(iter, packetLength - sizeof(packetLength) - sizeof(age) -
-                               sizeof(gender));
+    auto name = take(iter, packetLength - sizeof(packetLength) -
+                               sizeof(age) - sizeof(gender));
 
-    return Person(std::string(name.begin(), name.end()), age, gender);
+    return Person(std::string(name.begin(), name.end()), age,
+                  gender);
 }
 
 template <>
@@ -143,9 +149,11 @@ struct std::formatter<Person> {
         return context.begin();
     }
 
-    auto format(const Person &person, std::format_context &context) const {
-        return std::format_to(context.out(), "{:l} ({}{})", person.name,
-                              person.gender, person.age);
+    auto format(const Person        &person,
+                std::format_context &context) const {
+        return std::format_to(context.out(), "{:l} ({}{})",
+                              person.name, person.gender,
+                              person.age);
     }
 };
 
@@ -165,7 +173,7 @@ int main(int, char *[]) {
     auto person = decoder::decode<Person>(buffer);
     std::print("{}", person);
 
-    std::unique_ptr t = std::make_unique<int>(5);
+    auto t = std::make_unique<int>(5);
 
     return 0;
 }
